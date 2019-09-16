@@ -16,7 +16,7 @@ public class SwapQueue implements Cloneable
     {
         SwapQueue swapQueue=(SwapQueue)super.clone();
 
-        swapQueue.setQ1(new InnerQueue(getQ1().getHead(),getQ1().getTail()));
+        swapQueue.setQ2(new InnerQueue(getQ1().getHead(),getQ1().getTail()));
         swapQueue.setQ2(new InnerQueue(getQ2().getHead(),getQ2().getTail()));
         return swapQueue;
     }

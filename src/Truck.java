@@ -1,4 +1,4 @@
-public class Truck
+public class Truck implements Cloneable
 {
     private int mass;
     private int id;
@@ -10,6 +10,13 @@ public class Truck
         this.id=id;
         this.insideSQ=false;//assumption: every truck starts on waiting queue
     }
+
+    @Override
+    public Object clone()throws CloneNotSupportedException
+    {
+        return new Truck(getMass(),getId());
+    }
+
 
     public void setId(int id)
     {

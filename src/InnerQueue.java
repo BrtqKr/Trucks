@@ -1,4 +1,4 @@
-public class InnerQueue extends Queue
+public class InnerQueue extends Queue implements Cloneable
 {
     private boolean isExpress;
     private int massTotal;
@@ -10,6 +10,12 @@ public class InnerQueue extends Queue
         this.tail=tail;
         this.elementsCounter=0;
         this.massTotal=0;
+    }
+
+    @Override
+    public Object clone()throws CloneNotSupportedException
+    {
+        return new InnerQueue((Node)this.head.clone(),(Node)this.tail.clone());
     }
 
     public void step()
