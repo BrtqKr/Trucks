@@ -1,6 +1,6 @@
 import jline.console.ConsoleReader;
 
-import java.io.*;
+import java.io.IOException;
 
 public class Main {
 
@@ -31,52 +31,10 @@ public class Main {
                                     System.out.print("\t");
                                     waitingQueue.printQueue();
                                     sq.printQueue();
-                                    System.out.println("\nQ1: " + sq.getQ1().getExpressStatus() + " Q2: " + sq.getQ2().getExpressStatus());
-                                    System.out.println("\nQ1: " + sq.getQ1().getMassTotal() + " Q2: " + sq.getQ2().getMassTotal());
-
                                     break;
                                 case "step":
-                                    sq.step();
-                                    if (waitingQueue.getElementsCounter() > 0) {
-                                        if (!(sq.getQ1().getElementsCounter() == 5 && sq.getQ2().getElementsCounter() == 5)) {
-                                            InnerQueue queue1 = sq.getQ1();
-                                            InnerQueue queue2 = sq.getQ2();
-
-                                            Node insertNode = waitingQueue.getHead();
-                                            waitingQueue.pushQueue();
-
-                                            if (queue1.getElementsCounter() == 5) {
-                                                sq.optimise();
-                                                queue2.insert(insertNode);
-                                            } else if (queue2.getElementsCounter() == 5) {
-                                                sq.optimise();
-                                                queue1.insert(insertNode);
-                                            } else if (queue1.isEmpty() && queue2.isEmpty()) {
-                                                queue1.insert(insertNode);
-                                            } else if (queue1.isEmpty() && queue2.getElementsCounter() == 1) {
-                                                queue1.insert(insertNode);
-                                                sq.resolveExpress();
-                                            } else if (queue2.isEmpty() && queue1.getElementsCounter() == 1) {
-                                                queue2.insert(insertNode);
-                                                sq.resolveExpress();
-                                            } else if (queue1.getExpressStatus() && queue1.getHead().getTruck().getMass() >= queue2.getMassTotal()) {
-                                                queue1.setExpress(false);
-                                                queue2.setExpress(true);
-                                            } else if (queue2.getExpressStatus() && queue2.getHead().getTruck().getMass() > queue1.getMassTotal()) {
-                                                queue2.setExpress(false);
-                                                queue1.setExpress(true);
-                                            } else if (queue1.getMassTotal() > queue2.getMassTotal()) {
-                                                sq.optimise();
-                                                queue2.insert(insertNode);
-                                            } else if (queue1.getMassTotal() <= queue2.getMassTotal()) {
-                                                sq.optimise();
-                                                queue1.insert(insertNode);
-                                            }
-
-                                            if (waitingQueue.getElementsCounter() > 0)
-                                                waitingQueue.getHead().setNext(null);
-                                        }
-                                    }
+                                    Stepper stepper = new Stepper();
+                                    stepper.step(sq, waitingQueue);
                                     break;
                                 default:
                                     System.out.println("Invalid command, type help to display available commands");
@@ -93,94 +51,16 @@ public class Main {
                                     break;
                                 case "estimated":
                                     int estID = Integer.valueOf(order[1]);
-                                    int timer = 0;
-
-                                    //deep copy SwapQueue
-                                    SwapQueue sq2;
-                                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                                    ObjectOutputStream oos = new ObjectOutputStream(bos);
-                                    oos.writeObject(sq);
-                                    oos.flush();
-                                    oos.close();
-                                    bos.close();
-                                    byte[] byteData = bos.toByteArray();
-                                    ByteArrayInputStream bais = new ByteArrayInputStream(byteData);
-                                    sq2 = (SwapQueue) new ObjectInputStream(bais).readObject();
-
-                                    //deep copy WaitingQueue
-                                    Queue waitingQueue2;
-                                    bos = new ByteArrayOutputStream();
-                                    oos = new ObjectOutputStream(bos);
-                                    oos.writeObject(waitingQueue);
-                                    oos.flush();
-                                    oos.close();
-                                    bos.close();
-                                    byteData = bos.toByteArray();
-                                    bais = new ByteArrayInputStream(byteData);
-                                    waitingQueue2 = (Queue) new ObjectInputStream(bais).readObject();
-
-
-                                    if (sq2.getByID(estID) == null) {
-                                        if (waitingQueue2.getTrucks().get(estID) == null) {
-                                            System.out.println("Element with a given ID could not be found");
-                                            break;
-                                        }
-                                    }
-
-                                    while (sq2.getQ1().getHead().getTruck().getId() != estID && sq2.getQ2().getHead().getTruck().getId() != estID) {
-
-                                        if (waitingQueue2.getElementsCounter() > 0) {
-                                            if (!(sq2.getQ1().getElementsCounter() == 5 && sq2.getQ2().getElementsCounter() == 5)) {
-                                                InnerQueue queue1 = sq2.getQ1();
-                                                InnerQueue queue2 = sq2.getQ2();
-
-                                                Node insertNode = waitingQueue2.getHead();
-                                                waitingQueue2.pushQueue();
-                                                sq2.optimise();
-                                                if (queue1.getElementsCounter() == 5) {
-                                                    sq2.optimise();
-                                                    queue2.insert(insertNode);
-                                                } else if (queue2.getElementsCounter() == 5) {
-                                                    sq2.optimise();
-                                                    queue1.insert(insertNode);
-                                                } else if (queue1.isEmpty() && queue2.isEmpty()) {
-                                                    queue1.insert(insertNode);
-                                                } else if (queue1.isEmpty() && queue2.getElementsCounter() == 1) {
-                                                    queue1.insert(insertNode);
-                                                    sq2.resolveExpress();
-                                                } else if (queue2.isEmpty() && queue1.getElementsCounter() == 1) {
-                                                    queue2.insert(insertNode);
-                                                    sq2.resolveExpress();
-                                                } else if (queue1.getExpressStatus() && queue1.getHead().getTruck().getMass() >= queue2.getMassTotal()) {
-                                                    queue1.setExpress(false);
-                                                    queue2.setExpress(true);
-                                                } else if (queue2.getExpressStatus() && queue2.getHead().getTruck().getMass() > queue1.getMassTotal()) {
-                                                    queue2.setExpress(false);
-                                                    queue1.setExpress(true);
-                                                } else if (queue1.getMassTotal() > queue2.getMassTotal()) {
-                                                    sq2.optimise();
-                                                    queue2.insert(insertNode);
-                                                } else if (queue1.getMassTotal() <= queue2.getMassTotal()) {
-                                                    sq2.optimise();
-                                                    queue1.insert(insertNode);
-                                                }
-
-                                                if (waitingQueue2.getElementsCounter() > 0)
-                                                    waitingQueue2.getHead().setNext(null);
-                                            }
-                                        }
-                                        sq2.step();
-                                        timer++;
-                                    }
-                                    timer += sq2.getByID(estID).getTruck().getMass();
-                                    System.out.println("\nEstimated time: " + timer + "steps");
-
+                                    Estimator estimator = new Estimator();
+                                    if (estimator.estimate(estID, sq, waitingQueue) == -1) break;
+                                    break;
                                 default:
-                                    System.out.println("Invalid command, type help to display available commands");
+                                    System.out.println("Invalid command, type help to display available commands or check for typos");
 
 
                             }
-                        } else System.out.println("Invalid command, type help to display available commands");
+                        } else
+                            System.out.println("Invalid command: wrong command length, type help to display available commands");
 
                     }
                 } catch (ClassNotFoundException | NumberFormatException ex) {

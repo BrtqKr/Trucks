@@ -3,12 +3,12 @@ import java.io.Serializable;
 class SwapQueue implements Serializable {
     private InnerQueue q1;
     private InnerQueue q2;
-    //private HashMap<Integer, Node> swapTrucks;
+
 
     SwapQueue(InnerQueue q1, InnerQueue q2) {
         this.q1 = q1;
         this.q2 = q2;
-        //swapTrucks = new HashMap<>();
+
     }
 
     private void swap(Node node1, Node node2) {
