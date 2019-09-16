@@ -64,7 +64,7 @@ public class Main {
 
                     }
                 } catch (ClassNotFoundException | NumberFormatException ex) {
-                    System.out.print(ex.getMessage() + "\n");
+                    System.out.println(ex.getMessage());
                 }
 
             }
