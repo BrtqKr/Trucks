@@ -1,4 +1,4 @@
-public class SwapQueue
+public class SwapQueue implements Cloneable
 {
     private InnerQueue q1;
     private InnerQueue q2;
@@ -7,6 +7,18 @@ public class SwapQueue
     {
         this.q1=q1;
         this.q2=q2;
+    }
+
+
+
+    @Override
+    public Object clone()throws CloneNotSupportedException
+    {
+        SwapQueue swapQueue=(SwapQueue)super.clone();
+
+        swapQueue.setQ1(new InnerQueue(getQ1().getHead(),getQ1().getTail()));
+        swapQueue.setQ2(new InnerQueue(getQ2().getHead(),getQ2().getTail()));
+        return swapQueue;
     }
 
     public void swap(Node node1, Node node2)
@@ -55,8 +67,8 @@ public class SwapQueue
 
     public void printQueue()
     {
-        Node tmp=this.q1.getHead();
-        Node tmp2=this.q2.getHead();
+        Node tmp=q1.getHead();
+        Node tmp2=q2.getHead();
         System.out.println("Inner Queues:\n");
         System.out.print("\t");
         System.out.print("<- ");
@@ -91,5 +103,14 @@ public class SwapQueue
     public InnerQueue getQ2()
     {
         return this.q2;
+    }
+
+    public void setQ1(InnerQueue q1)
+    {
+        this.q1=q1;
+    }
+    public void setQ2(InnerQueue q2)
+    {
+        this.q2=q2;
     }
 }

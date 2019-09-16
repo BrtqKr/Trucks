@@ -4,7 +4,7 @@ import java.io.IOException;
 
 public class Main {
 
-    public static void main(String[] args)
+    public static void main(String[] args)throws CloneNotSupportedException
     {
         try
         {
@@ -15,6 +15,10 @@ public class Main {
             InnerQueue q2=new InnerQueue(null,null);
 
             SwapQueue sq=new SwapQueue(q1,q2);
+
+
+            SwapQueue sq2=new SwapQueue(null,null);//DELETE AFTER TESTS
+
 
             ConsoleReader linereader = new ConsoleReader(System.in, System.out);
 
@@ -86,6 +90,18 @@ public class Main {
                                             if(waitingQueue.getElementsCounter()>0)waitingQueue.getHead().setNext(null);
                                         }
                                     }
+                                    break;
+                                case "clone":
+                                    Object object=sq.clone();
+                                    sq2=(SwapQueue)object;
+                                    System.out.println("Queue cloning successful");
+                                    break;
+                                case "clonePrint":
+                                    System.out.println("Cloned queue: \n");
+                                    sq2.printQueue();
+                                    break;
+                                case "cloneStep":
+                                    sq2.step();
                                     break;
                                 default:
                                     System.out.println("Invalid command, type help to display available commands");
